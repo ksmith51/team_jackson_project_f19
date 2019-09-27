@@ -165,6 +165,7 @@ bool valid_option(char *input){
         case 'D': case 'd':
             return true;
     }
+    return false;
 }
 
 /* 
