@@ -227,18 +227,16 @@ void open_student_file(FILE **file){
     }
 }
 
-#if 0
 /*
-    function to open save file for appending
+    function to open save file for rewriting
 */
-void append_student_file(FILE **file){
-    *file = fopen("students.txt", "a");
+void write_student_file(FILE **file){
+    *file = fopen("students.txt", "w+");
     if(*file == NULL){
         printf("Unable to open file..\n");
         return;
     }
 }
-#endif
 
 /*
     function to close the save file
@@ -260,7 +258,7 @@ void save_student_file(){
     printf("...saving student file\n");
 
     //open student file
-    open_student_file(&file);
+    write_student_file(&file);
 
     /* loops thru student array, adds all info to save file */
     for (i = 0; i < count; i++){
@@ -527,10 +525,26 @@ int find_student(){
 */
 void remove_student(){
     printf("...removing student\n");
+    int i, j;
     //find student(get pointer to student)
-    //checker for multiple students
+    i = find_student();
+    if(i == -1){
+        return;
+    }
     //remove from array
+    for(int j = i + 1; j < count; j++){
+        strcpy(Students[i].name, Students[j].name);
+        strcpy(Students[i].email, Students[j].email);
+        strcpy(Students[i].id, Students[j].id);
+        Students[i].presentation = Students[j].presentation;
+        Students[i].essay = Students[j].essay;
+        Students[i].project = Students[j].project;
+        i++;
+    }
+    count = count - 1;
+
     //rewrite save file
+    save_student_file();
 }
 
 /*
@@ -608,6 +622,7 @@ int main() {
                 case 'R':
                 case 'r': valid = 1;
                     printf("...removing student\n");
+                    remove_student();
                     break;
                 
                 //print students
