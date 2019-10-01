@@ -136,6 +136,8 @@ grade convert_char_to_grade(char c){
     return ret;
 }
 
+
+
 /*
     function to convert enum input into char
     returns ? if character given is not A, B, C, D, or F
@@ -157,6 +159,31 @@ char convert_grade_to_char(grade g){
             break;
     }
     return ret;
+}
+
+/*
+    function to print a student struct
+*/
+void print_student(student s, bool printOptions){
+
+    if(printOptions){
+        printf("A: Name: %s\n", s.name);
+        printf("B: Email: %s\n", s.email);
+        printf("C: UID: %s\n", s.id);
+        printf("D: Presentation Grade: %c\n", convert_grade_to_char(s.presentation));
+        printf("E: Essay Grade: %c\n", convert_grade_to_char(s.essay));
+        printf("F: Project Grade: %c\n", convert_grade_to_char(s.project));
+        printf("G: Exit Updating Student\n");
+    }
+    else{
+        printf("Name: %s\n", s.name);
+        printf("Email: %s\n", s.email);
+        printf("UID: %s\n", s.id);
+        printf("Presentation Grade: %c\n", convert_grade_to_char(s.presentation));
+        printf("Essay Grade: %c\n", convert_grade_to_char(s.essay));
+        printf("Project Grade: %c\n", convert_grade_to_char(s.project));
+    }
+
 }
 
 /*
@@ -539,28 +566,142 @@ void remove_student(){
     save_student_file();
 }
 
+
+
+
+/*
+    function to update specific field of student
+*/
+
+student update_student_field(student s, int fieldToChange){
+    char input[BUFFER];
+
+    switch(fieldToChange){
+        case 1:
+            printf("Enter student name (40 char max): ");
+            get_input(input);
+            while(strlen(input) == 0 || strlen(input) > MAX_STRING){
+                printf("Invalid name. Re-enter student name (40 char max): ");
+                get_input(input);
+            }
+            strcpy(s.name, input);
+            break;
+        case 2:
+            printf("Enter student email: ");
+            get_input(input);
+            while(strlen(input) == 0 || strlen(input) > MAX_STRING){
+                printf("Invalid name. Re-enter student email (40 char max): ");
+                get_input(input);
+            }
+            strcpy(s.email, input);
+            break;
+        case 3:
+            printf("Enter student UID: ");
+            get_input(input);
+            while(strlen(input) == 0 || strlen(input) > MAX_ID || id_check(input) == false){
+                printf("Invalid name. Re-enter student UID (10 char max): ");
+                get_input(input);
+            }
+            //check format
+            strcpy(s.id, input);
+            break;
+        case 4:
+            printf("Enter presentation grade (A, B, C, D, F): ");
+            get_input(input);
+            while(strlen(input) != 1 || convert_char_to_grade(input[0]) == ERR){
+                printf("Invalid grade. Re-enter presentation grade (A, B, C, D, F): ");
+                get_input(input);
+            }
+            s.presentation = convert_char_to_grade(input[0]);
+            break;
+        case 5:
+            printf("Enter essay grade (A, B, C, D, F): ");
+            get_input(input);
+            while(strlen(input) != 1 || convert_char_to_grade(input[0]) == ERR){
+                printf("Invalid grade. Re-enter essay grade (A, B, C, D, F): ");
+                get_input(input);
+            }
+            s.essay = convert_char_to_grade(input[0]);
+            break;
+        case 6:
+            printf("Enter project grade (A, B, C, D, F): ");
+            get_input(input);
+            while(strlen(input) != 1 || convert_char_to_grade(input[0]) == ERR){
+                printf("Invalid grade. Re-enter project grade (A, B, C, D, F): ");
+                get_input(input);
+            }
+            s.project = convert_char_to_grade(input[0]);
+            break;
+        default:
+            printf("Error");
+    }
+
+    return s;
+}
+
 /*
     function to update student***
 */
 void update_student(){
+    char c, input[BUFFER];
     printf("...updating student\n");
     //find student(get pointer to student / index)
-    //get changes from user
-    //change student inside array
-    //rewrite save file
+
+    int arrayIndex = find_student();
+
+    student studentToUpdate = Students[arrayIndex];
+    student updatedStudent = studentToUpdate;
+
+    bool keepRunning = true;
+    while(keepRunning){
+
+        //Pass in True since it will show A, B, C, .. next to entries
+        print_student(updatedStudent, true);
+
+        printf("Select an option for which field to update\n");
+        get_input(input);
+        int fieldToUpdate = -1;
+        c = input[0];
+        switch(c){
+            case 'A':
+            case 'a':
+                updatedStudent = update_student_field(studentToUpdate, 1);
+                break;
+            case 'B':
+            case 'b':
+                updatedStudent = update_student_field(studentToUpdate, 2);
+                break;
+            case 'C':
+            case 'c':
+                updatedStudent = update_student_field(studentToUpdate, 3);
+                break;
+            case 'D':
+            case 'd':
+                updatedStudent = update_student_field(studentToUpdate, 4);
+                break;
+            case 'E':
+            case 'e':
+                updatedStudent = update_student_field(studentToUpdate, 5);
+                break;
+            case 'F':
+            case 'f':
+                updatedStudent = update_student_field(studentToUpdate, 6);
+                break;
+            case 'G':
+            case 'g':
+                keepRunning = false;
+                break;
+        }
+    }
+
+    Students[arrayIndex] = updatedStudent;
+    save_student_file();
+
 }
 
-/*
-    function to print a student struct
-*/
-void print_student(student s){
-    printf("Name: %s\n", s.name);
-    printf("Email: %s\n", s.email);
-    printf("UID: %s\n", s.id);
-    printf("Presentation Grade: %c\n", convert_grade_to_char(s.presentation));
-    printf("Essay Grade: %c\n", convert_grade_to_char(s.essay));
-    printf("Project Grade: %c\n", convert_grade_to_char(s.project));
-}
+
+
+
 
 /* MAIN FUNCTION */
 int main() {
@@ -628,7 +769,7 @@ int main() {
                         break;
                     }
                     for (int i = 0; i < count; i++){
-                        print_student(Students[i]);
+                        print_student(Students[i],false);
                         printf("\n");
                     }
                     break;
@@ -637,6 +778,7 @@ int main() {
                 case 'U':
                 case 'u': valid = 1;
                     printf("*****Updating student*****\n");
+                    update_student();
                     printf("\n");
                     break;
                 
@@ -648,7 +790,7 @@ int main() {
                     index = find_student();
                     if(index != -1){
                         student temp;
-                        print_student(Students[index]);
+                        print_student(Students[index],false);
                     }
                     printf("\n");
                     break;
