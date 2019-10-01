@@ -21,6 +21,7 @@
 
 /* global constants / definitions */
 #define BUFFER 10000                        //large integer
+#define buff 100000000
 #define MAX_ID 10
 #define MAX_STRING 40
 
@@ -61,7 +62,7 @@ void add_student_memory(){
     //reallocate Students with power 2 of current number
     if(count == max){
         max *= max;
-        Students = realloc(Students, sizeof(student)*(max));
+        Students = realloc(Students, sizeof(student)^(max*buff));  //CHANGED sizeof(student)*max -> sizeof(student)^(max*buff) : crashes after small amount of students are added
     }
 }
 
