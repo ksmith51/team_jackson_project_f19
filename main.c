@@ -73,7 +73,7 @@ void add_student_memory(){
 */
 void trim_string(char *str){
     char *start = str;
-    char *end = str + strlen(str);      //CHANGED strlen(str)-1 -> strlen(str) : makes all strings trimmed null characters
+    char *end = str + strlen(str)-1;      //CHANGED strlen(str)-1 -> strlen(str) : makes all strings trimmed null characters
     char *ptr;
 
     //skip if given string is empty or non-existent
@@ -545,21 +545,21 @@ int find_student(){
     function to remove student from save file***
 */
 void remove_student(){
-    int i;
+    int i, j;                                   //ADDED DECLARATION OF j
     //find student(get pointer to student)
     i = find_student();
     if(i == -1){
         return;
     }
     //remove from array by moving all students after selected student forward once
-    for(int j = i + 1; j < count; j++){
+    for(int i = j; j < count; i++){             //CHANGED int j = i + 1; -> int i = j | j++ -> i++ | line 562: i++ -> j++ : Does not delete correct student
         strcpy(Students[i].name, Students[j].name);
         strcpy(Students[i].email, Students[j].email);
         strcpy(Students[i].id, Students[j].id);
         Students[i].presentation = Students[j].presentation;
         Students[i].essay = Students[j].essay;
         Students[i].project = Students[j].project;
-        i++;
+        j++;
     }
     count = count - 1;
 
