@@ -284,7 +284,7 @@ void close_student_file(FILE **file){
 void save_student_file(){
     FILE *file;
     int i;
-    char c, str[BUFFER];
+    char str[BUFFER];
 
     //open student file
     write_student_file(&file);
@@ -317,7 +317,7 @@ void save_student_file(){
 */
 void load_student_file(){
     FILE *file;
-    char c, str[BUFFER];
+    char str[BUFFER];
 
     //open student file
     open_student_file(&file);
@@ -544,7 +544,7 @@ int find_student(){
     function to remove student from save file***
 */
 void remove_student(){
-    int i, j;
+    int i;
     //find student(get pointer to student)
     i = find_student();
     if(i == -1){
@@ -645,13 +645,17 @@ student update_student_field(student s, int fieldToChange){
 void update_student(){
     char c, input[BUFFER];
     printf("...updating student\n");
-    //find student(get pointer to student / index)
 
+    //Access array to edit student
     int arrayIndex = find_student();
 
+    //Initial Student found from find_student to update
     student studentToUpdate = Students[arrayIndex];
+
+    //Student After Update
     student updatedStudent = studentToUpdate;
 
+    //Keep Asking for updates before exiting
     bool keepRunning = true;
     while(keepRunning){
 
@@ -660,7 +664,6 @@ void update_student(){
 
         printf("Select an option for which field to update\n");
         get_input(input);
-        int fieldToUpdate = -1;
         c = input[0];
         switch(c){
             case 'A':
@@ -789,7 +792,6 @@ int main() {
                     printf("*****Finding student*****\n");
                     index = find_student();
                     if(index != -1){
-                        student temp;
                         print_student(Students[index],false);
                     }
                     printf("\n");
