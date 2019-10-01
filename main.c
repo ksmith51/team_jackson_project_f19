@@ -648,6 +648,9 @@ void update_student(){
 
     //Access array to edit student
     int arrayIndex = find_student();
+    if (arrayIndex == -1){
+        return;
+    }
 
     //Initial Student found from find_student to update
     student studentToUpdate = Students[arrayIndex];
