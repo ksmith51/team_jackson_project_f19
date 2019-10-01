@@ -73,7 +73,7 @@ void add_student_memory(){
 */
 void trim_string(char *str){
     char *start = str;
-    char *end = str + strlen(str)-1;
+    char *end = str + strlen(str);      //CHANGED strlen(str)-1 -> strlen(str) : makes all strings trimmed null characters
     char *ptr;
 
     //skip if given string is empty or non-existent
