@@ -24,25 +24,29 @@
 #define MAX_ID 10
 #define MAX_STRING 40
 
+/* boolean type because C doesn't have one */
 #define true 1
 #define false 0
 typedef int bool;
 
+/* Enumeration of grades (F=0...A=4) */
 typedef enum gradeType{
     F, D, C, B, A, ERR
 } grade;
 
+/* Structure that holds student information inside
+*  the global array */
 typedef struct studentInfo{
-    char name[MAX_STRING + 1];              //40 long, +1 for null character
-    char email[MAX_STRING + 1];
-    char id[MAX_ID + 1];
-    grade presentation;
-    grade essay;
-    grade project;
+    char name[MAX_STRING + 1];              //40 char long, +1 for null char
+    char email[MAX_STRING + 1];             //40 char long, +1 for null char
+    char id[MAX_ID + 1];                    //10 char long, +1 for null char
+    grade presentation;                     //enum value
+    grade essay;                            //enum value
+    grade project;                          //enum value
 } student;
 
 /* global variables */
-student *Students;
+student *Students;                          //holds all student information
 int count = 0;                              //index of Students, initially 0
 int max = 2;                                //number of student structs allocated to Students, initially 2
 
@@ -53,6 +57,8 @@ int max = 2;                                //number of student structs allocate
     reallocates memory to Students if not sufficient
 */
 void add_student_memory(){
+    //if # of filled students equals amount allocated,
+    //reallocate Students with power 2 of current number
     if(count == max){
         max *= max;
         Students = realloc(Students, sizeof(student)*(max));
@@ -68,6 +74,8 @@ void trim_string(char *str){
     char *start = str;
     char *end = str + strlen(str)-1;
     char *ptr;
+
+    //skip if given string is empty or non-existent
     if(*str == '\0' || str == NULL){ return; }
 
     //finds first non-whitespace character
@@ -153,6 +161,7 @@ char convert_grade_to_char(grade g){
 
 /*
     function to determine if user option chosen is valid
+    used mostly for find function
 */
 bool valid_option(char *input){
     switch(input[0]){
@@ -170,18 +179,11 @@ bool valid_option(char *input){
 
 /* 
     helper function for getting user input
+    used any time a string is read in from a source
 */
 void get_input(char *input){
     fgets(input, BUFFER, stdin);
     trim_string(input);
-}
-
-/*
-    checks format of email, returns true if correct***
-*/
-bool email_check(char *str){
-
-    return true;
 }
 
 /*
@@ -212,7 +214,7 @@ void print_commands(){
 
 /*
     function to open save file for reading/writing
-    also used to ensure save file exists, creates one if not
+    also ensures save file exists, creates one if not
 */
 void open_student_file(FILE **file){
     *file = fopen("students.txt", "r+");
@@ -256,7 +258,6 @@ void save_student_file(){
     FILE *file;
     int i;
     char c, str[BUFFER];
-    printf("...saving student file\n");
 
     //open student file
     write_student_file(&file);
@@ -282,7 +283,6 @@ void save_student_file(){
 
     //close student file
     close_student_file(&file);
-    printf("...saved successfully\n");
 }
 
 /*
@@ -291,7 +291,6 @@ void save_student_file(){
 void load_student_file(){
     FILE *file;
     char c, str[BUFFER];
-    printf("...loading student file\n");
 
     //open student file
     open_student_file(&file);
@@ -344,7 +343,6 @@ void load_student_file(){
 
     //close student file
     close_student_file(&file);
-    printf("...loaded successfully\n");
     return;
 }
 
@@ -368,11 +366,10 @@ student create_student(){
     //get email
     printf("Enter student email: ");
     get_input(input);
-    while(strlen(input) == 0 || strlen(input) > MAX_STRING || email_check(input) == false){
+    while(strlen(input) == 0 || strlen(input) > MAX_STRING){
         printf("Invalid name. Re-enter student email (40 char max): ");
         get_input(input);
     }
-    //check format
     strcpy(s.email, input);
 
     //get id
@@ -423,7 +420,6 @@ int find_student(){
     int parameter, valid = 0;
 
     //get search parameter
-    printf("...finding student\n");
     printf("A: Name\nB: Email\nC: UID\nD: Exit\n");
     printf("How would you like to search for the student?\n");
     while(valid == 0){
@@ -432,22 +428,18 @@ int find_student(){
         if(strlen(input) == 1){
             switch(input[0]){
                 case 'A': case 'a':
-                    printf("Name\n");
                     parameter = 0;
                     valid = 1;
                     break;
                 case 'B': case 'b':
-                    printf("Email\n");
                     parameter = 1;
                     valid = 1;
                     break;
                 case 'C': case 'c':
-                    printf("UID\n");
                     parameter = 2;
                     valid = 1;
                     break;
                 case 'D': case 'd':
-                    printf("Exit\n");
                     valid = 1;
                     return -1;
                     break;
@@ -525,14 +517,13 @@ int find_student(){
     function to remove student from save file***
 */
 void remove_student(){
-    printf("...removing student\n");
     int i, j;
     //find student(get pointer to student)
     i = find_student();
     if(i == -1){
         return;
     }
-    //remove from array
+    //remove from array by moving all students after selected student forward once
     for(int j = i + 1; j < count; j++){
         strcpy(Students[i].name, Students[j].name);
         strcpy(Students[i].email, Students[j].email);
@@ -612,24 +603,26 @@ int main() {
                 //add student
                 case 'A':
                 case 'a': valid = 1;
-                    printf("...adding student\n");
+                    printf("*****Adding student*****\n");
                     Students[count] = create_student();
                     count++;
                     //reduces amount of reallocations
                     add_student_memory();
+                    printf("\n");
                     break;
                 
                 //remove student
                 case 'R':
                 case 'r': valid = 1;
-                    printf("...removing student\n");
+                    printf("*****Removing student*****\n");
                     remove_student();
+                    printf("\n");
                     break;
                 
                 //print students
                 case 'P':
                 case 'p': valid = 1;
-                    printf("...printing students\n");
+                    printf("*****Printing students*****\n");
                     if (count == 0){
                         printf("ERR: No students exist. Enter \"a\" to add a new student.\n");
                         break;
@@ -643,33 +636,37 @@ int main() {
                 //update student
                 case 'U':
                 case 'u': valid = 1;
-                    printf("...updating student\n");
+                    printf("*****Updating student*****\n");
+                    printf("\n");
                     break;
                 
                 //find student
                 case 'F':
                 case 'f': valid = 1;
                     int index;
-                    printf("...finding student\n");
+                    printf("*****Finding student*****\n");
                     index = find_student();
                     if(index != -1){
                         student temp;
                         print_student(Students[index]);
                     }
+                    printf("\n");
                     break;
 
                 //quit program
                 case 'Q':
                 case 'q': valid = 1;
-                    printf("...quitting program\n");
+                    printf("*****Quitting program*****\n");
                     save_student_file();
                     end = 1;
+                    printf("\n");
                     break;
 
                 //show commands
                 case 'H':
                 case 'h': valid = 1;
                     print_commands();
+                    printf("\n");
                     break;
 
                 default:
