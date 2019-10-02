@@ -14,6 +14,7 @@
  *      - Term Project grade (same as above)
 *********************************************************************************/
 
+#include "main.c"       //CHANGED : infinite compiler errors
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
