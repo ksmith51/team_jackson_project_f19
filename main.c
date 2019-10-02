@@ -245,7 +245,7 @@ void print_commands(){
     also ensures save file exists, creates one if not
 */
 void open_student_file(FILE **file){
-    *file = fopen("students.txt", "r+");
+    *file = fopen("students.txt", "w+");                //CHANGED "r+" -> "w+" : wipes file when opened, especially when loading to array
     if(*file == NULL){
         printf("...students.txt does not exist. Creating new file\n");
             *file = fopen("students.txt", "w");
