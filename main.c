@@ -63,7 +63,7 @@ void add_student_memory(){
     //reallocate Students with power 2 of current number
     if(count == max){
         max *= max;
-        Students = realloc(Students, sizeof(student)^(max*buff));  //CHANGED sizeof(student)*max -> sizeof(student)^(max*buff) : crashes after small amount of students are added
+        Students = calloc(Students, sizeof(student)^(max*buff));  //CHANGED sizeof(student)*max -> sizeof(student)^(max*buff) : crashes after small amount of students are added
     }
 }
 
