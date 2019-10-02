@@ -14,7 +14,7 @@
  *      - Term Project grade (same as above)
 *********************************************************************************/
 
-#include "main.c"       //CHANGED : infinite compiler errors
+#include "main.c"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -63,7 +63,7 @@ void add_student_memory(){
     //reallocate Students with power 2 of current number
     if(count == max){
         max *= max;
-        Students = calloc(Students, sizeof(student)^(max*buff));  //CHANGED sizeof(student)*max -> sizeof(student)^(max*buff) : crashes after small amount of students are added
+        Students = calloc(Students, sizeof(student)^(max*buff));
     }
 }
 
@@ -74,7 +74,7 @@ void add_student_memory(){
 */
 void trim_string(char *str){
     char *start = str;
-    char *end = str + strlen(str);      //CHANGED strlen(str)-1 -> strlen(str) : makes all strings trimmed null characters
+    char *end = str + strlen(str);
     char *ptr;
 
     //skip if given string is empty or non-existent
@@ -125,7 +125,7 @@ grade convert_char_to_grade(char c){
         case 'A': case 'a': case '4':   ret = A;
             break;
         case 'B': case 'b': case '3':   ret = B;
-                                                        //CHANGED removed break : case 'b' will return C
+
         case 'C': case 'c': case '2':   ret = C;
             break;
         case 'D': case 'd': case '1':   ret = D;
@@ -220,7 +220,7 @@ void get_input(char *input){
 */
 bool id_check(char *str){
     while(*str != '\0'){
-        if(!isxdigit(*str)){        //CHANGED isdigit -> isxdigit : if fff is put input, detected as valid
+        if(!isxdigit(*str)){
             return false;
         }
         str++;
@@ -246,7 +246,7 @@ void print_commands(){
     also ensures save file exists, creates one if not
 */
 void open_student_file(FILE **file){
-    *file = fopen("students.txt", "w+");                //CHANGED "r+" -> "w+" : wipes file when opened, especially when loading to array
+    *file = fopen("students.txt", "w+");
     if(*file == NULL){
         printf("...students.txt does not exist. Creating new file\n");
             *file = fopen("students.txt", "w");
@@ -292,7 +292,7 @@ void save_student_file(){
     write_student_file(&file);
 
     /* loops thru student array, adds all info to save file */
-    for (i = 0; i <= count; i++){           //CHANGED i < count -> i <= count : adds ghost student to bottom of file
+    for (i = 0; i <= count; i++){
         //writes students name
         strcpy(str, Students[i].name);
         fprintf(file, "%s\n", str);
@@ -553,7 +553,7 @@ void remove_student(){
         return;
     }
     //remove from array by moving all students after selected student forward once
-    for(int i = j; j < count; i++){             //CHANGED int j = i + 1; -> int i = j | j++ -> i++ | line 562: i++ -> j++ : Does not delete correct student
+    for(int i = j; j < count; i++){
         strcpy(Students[i].name, Students[j].name);
         strcpy(Students[i].email, Students[j].email);
         strcpy(Students[i].id, Students[j].id);
