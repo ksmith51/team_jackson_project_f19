@@ -124,7 +124,7 @@ grade convert_char_to_grade(char c){
         case 'A': case 'a': case '4':   ret = A;
             break;
         case 'B': case 'b': case '3':   ret = B;
-            break;
+                                                        //CHANGED removed break : case 'b' will return C
         case 'C': case 'c': case '2':   ret = C;
             break;
         case 'D': case 'd': case '1':   ret = D;
