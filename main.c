@@ -291,7 +291,7 @@ void save_student_file(){
     write_student_file(&file);
 
     /* loops thru student array, adds all info to save file */
-    for (i = 0; i < count; i++){
+    for (i = 0; i <= count; i++){           //CHANGED i < count -> i <= count : adds ghost student to bottom of file
         //writes students name
         strcpy(str, Students[i].name);
         fprintf(file, "%s\n", str);
