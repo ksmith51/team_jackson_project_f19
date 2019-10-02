@@ -220,7 +220,7 @@ void get_input(char *input){
 */
 bool id_check(char *str){
     while(*str != '\0'){
-        if(!isdigit(*str)){
+        if(!isxdigit(*str)){        //CHANGED isdigit -> isxdigit : if fff is put input, detected as valid
             return false;
         }
         str++;
