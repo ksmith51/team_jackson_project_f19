@@ -297,7 +297,7 @@ int main() {
                 while ((ent = readdir(dir)) != NULL) {
                     if (ent->d_type == DT_REG) { // Files only
                         // Load the student from the found file
-                        student = loadStudent(ent);	
+                        student = loadStudent(ent);	                                                                    //ADDED "student = loadStudent(ent)"
                         // Determine if either the ID, Name, or Email match what the user searched for
                         if (strcasecmp(student->usf_id, needle) == 0 || strcasecmp(student->name, needle) == 0 ||
                             strcasecmp(student->email, needle) == 0) {
@@ -383,6 +383,8 @@ int main() {
                     default:
                         break;
                 }
+                //save student file
+                saveStudent(selected_student);                                                         //ADDED "saveStudent(selected_student);"
                 printf("Edit operation complete\n");
             } else {
                 printf("Unknown operation entered: %d\n", operation);
