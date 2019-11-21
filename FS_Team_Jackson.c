@@ -276,7 +276,7 @@ int main() {
         //find
         if (strcasecmp(command, "select") == 0) {
             // Read the search criteria entered by the user
-            char *needle;																																	                //CHANGED FROM '*needle' TO 'needle[128]'
+            char needle[128];																																	                //CHANGED FROM '*needle' TO 'needle[128]'
             read_line(stdin, needle, 128);
             struct Student *student = NULL;
             struct stat st = {0};
@@ -296,6 +296,8 @@ int main() {
                 // Loop through all of the contents within the student_data directory
                 while ((ent = readdir(dir)) != NULL) {
                     if (ent->d_type == DT_REG) { // Files only
+                        // Load the student from the found file
+                        student = loadStudent(ent);	
                         // Determine if either the ID, Name, or Email match what the user searched for
                         if (strcasecmp(student->usf_id, needle) == 0 || strcasecmp(student->name, needle) == 0 ||
                             strcasecmp(student->email, needle) == 0) {
