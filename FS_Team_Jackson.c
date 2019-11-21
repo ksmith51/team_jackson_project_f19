@@ -4,23 +4,23 @@
 #include <signal.h>
 #include <string.h>
 #include <errno.h>
-#include <dirent.h>
+#include "dirent.h"
 #include <sys/stat.h>
 #include <ctype.h>
 
 /**
 * Implementation of strcasecmp for use on Windows machines
 */
-int strcasecmp(const char *a, const char *b) {
-	int ca, cb;
-	do {
-		ca = (unsigned char)*a++;
-		cb = (unsigned char)*b++;
-		ca = tolower(toupper(ca));
-		cb = tolower(toupper(cb));
-	} while (ca == cb && ca != '\0');
-	return ca - cb;
-}
+//int strcasecmp(const char *a, const char *b) {
+//	int ca, cb;
+//	do {
+//		ca = (unsigned char)*a++;
+//		cb = (unsigned char)*b++;
+//		ca = tolower(toupper(ca));
+//		cb = tolower(toupper(cb));
+//	} while (ca == cb && ca != '\0');
+//	return ca - cb;
+//}
 
 /**
  * Pointer to the currently selected student
@@ -86,7 +86,7 @@ struct Student *loadStudent(struct dirent *file) {
     // Build the file path to save the student under
     FILE *fp;
     char *path = concat("student_data/", file->d_name);
-	fp = fopen(path, "r");																																		//CHANGED FROM 'fclose(path)' TO 'fopen(path, "r")'
+	  fp = fopen(path, "r");																																		//CHANGED FROM 'fclose(path)' TO 'fopen(path, "r")'
     free(path);
 
     if (fp == NULL) {
@@ -119,7 +119,7 @@ struct Student *loadStudent(struct dirent *file) {
 
 }
 
-/**
+/** WORKING?
  * Saves a student to a text file. The file and directory are automatically created if they do not already exist.
  * @param student The student data to save
  * @return If the operation was a success
@@ -131,7 +131,7 @@ bool saveStudent(struct Student *student) {
     // Create the student_data directory if it does not already exist
 	if (stat("student_data", &st) == -1) {																														//ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
 		#if defined(_WIN32)
-			_mkdir("student_data");
+			mkdir("student_data");
 		#else 
 			mkdir("student_data", 0700);
 		#endif
@@ -240,21 +240,21 @@ int main() {
         if (strcasecmp(command, "list") == 0) {
             struct stat st = {0};
             // Create the student_data directory if it does not already exist
-			if (stat("student_data", &st) == -1) {																												//ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
-				#if defined(_WIN32)
-					_mkdir("student_data");
-				#else 
-					mkdir("student_data", 0700);
-				#endif
-			}
+			      if (stat("student_data", &st) == -1) {																												//ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
+				    #if defined(_WIN32)
+					    mkdir("student_data");
+  				  #else 
+					    mkdir("student_data", 0700);
+				    #endif
+			      }
 
             DIR *dir;
             struct dirent *ent;
             struct Student *student;
             printf("----\n");
             // Open the student_data directory for reading
-            if ((dir = opendir("student-data")) != NULL) {
-                printf("ID\t\t\tName\tEmail\t\t\t\t\tPresentation Grade\tEssay Grade\tProject Grade\n");
+            if ((dir = opendir("student_data")) != NULL) {                                                  //CHANGED FROM "student-data" TO "student_data"
+                printf("ID\t\tName\t\tEmail\t\t\tPresentation Grade\t\tEssay Grade\t\tProject Grade\n");    //CHANGED TABS TO 2 TABS PER PARAMETER
                 // Loop through all of the contents within the student_data directory
                 while ((ent = readdir(dir)) != NULL) {
                     if (ent->d_type == DT_REG) { // Files only
@@ -276,18 +276,18 @@ int main() {
         //find
         if (strcasecmp(command, "select") == 0) {
             // Read the search criteria entered by the user
-            char needle[128];																																	//CHANGED FROM '*needle' TO 'needle[128]'
+            char *needle;																																	                //CHANGED FROM '*needle' TO 'needle[128]'
             read_line(stdin, needle, 128);
             struct Student *student = NULL;
             struct stat st = {0};
             // Create the student_data directory if it does not already exist
-			if (stat("student_data", &st) == -1) {																												//ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
-				#if defined(_WIN32)
-					_mkdir("student_data");
-				#else 
-					mkdir("student_data", 0700);
-				#endif
-			}
+      			if (stat("student_data", &st) == -1) {																												//ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
+      				#if defined(_WIN32)
+      					mkdir("student_data");
+      				#else 
+      					mkdir("student_data", 0700);
+      				#endif
+      			}
 
             DIR *dir;
             struct dirent *ent;
@@ -388,7 +388,7 @@ int main() {
         } else 
 
         //add
-        if (strcasecmp(command, "creat") == 0 || strcasecmp(command, "add") == 0) {
+        if (strcasecmp(command, "create") == 0 || strcasecmp(command, "add") == 0) {              //CHANGED "creat" TO "create"
             struct Student *student = malloc(sizeof(struct Student));
             printf("Enter name: ");
             read_line(stdin, student->name, 40);
