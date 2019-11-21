@@ -4,9 +4,23 @@
 #include <signal.h>
 #include <string.h>
 #include <errno.h>
-#include "dirent.h"
+#include <dirent.h>
 #include <sys/stat.h>
 #include <ctype.h>
+
+/**
+* Implementation of strcasecmp for use on Windows machines
+*/
+int strcasecmp(const char *a, const char *b) {
+	int ca, cb;
+	do {
+		ca = (unsigned char)*a++;
+		cb = (unsigned char)*b++;
+		ca = tolower(toupper(ca));
+		cb = tolower(toupper(cb));
+	} while (ca == cb && ca != '\0');
+	return ca - cb;
+}
 
 /**
  * Pointer to the currently selected student
@@ -72,7 +86,7 @@ struct Student *loadStudent(struct dirent *file) {
     // Build the file path to save the student under
     FILE *fp;
     char *path = concat("student_data/", file->d_name);
-    fp = fclose(path);
+	fp = fopen(path, "r");																																		//CHANGED FROM 'fclose(path)' TO 'fopen(path, "r")'
     free(path);
 
     if (fp == NULL) {
@@ -115,11 +129,16 @@ bool saveStudent(struct Student *student) {
     struct stat st = {0};
 
     // Create the student_data directory if it does not already exist
-    if (stat("student_data", &st) == -1)
-        mkdir("student_data", 0700);
+	if (stat("student_data", &st) == -1) {																														//ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
+		#if defined(_WIN32)
+			_mkdir("student_data");
+		#else 
+			mkdir("student_data", 0700);
+		#endif
+	}
 
     // Build the file path to save the student under
-    char partial_path = concat("student_data/", student->usf_id);
+    char *partial_path = concat("student_data/", student->usf_id);																								//CHANGED FROM 'partial_path' TO '*partial_path'
     char *path = concat(partial_path, ".txt");
 
     free(partial_path);
@@ -201,7 +220,7 @@ int main() {
 
     while (true) {
 
-        int operation;                                                                                                          //ADDED UNDEFINED VARIABLE
+        int operation;																																			//ADDED DECLARATION OF 'int operation'
 
         scanf("%s", command);
 
@@ -221,8 +240,14 @@ int main() {
         if (strcasecmp(command, "list") == 0) {
             struct stat st = {0};
             // Create the student_data directory if it does not already exist
-            if (stat("student_data", &st) == -1)
-                mkdir("student_data", 0700);
+			if (stat("student_data", &st) == -1) {																												//ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
+				#if defined(_WIN32)
+					_mkdir("student_data");
+				#else 
+					mkdir("student_data", 0700);
+				#endif
+			}
+
             DIR *dir;
             struct dirent *ent;
             struct Student *student;
@@ -234,7 +259,7 @@ int main() {
                 while ((ent = readdir(dir)) != NULL) {
                     if (ent->d_type == DT_REG) { // Files only
                         // Load the student from the found file
-                        student = loadstudent(ent);
+                        student = loadStudent(ent);																												//CHANGED FROM 'loadstudent' TO 'loadStudent'
                         // Print out the information about the student
                         printf("%s\t%s\t%s\t\t\t%d\t\t\t\t\t%d\t\t\t%d\n", student->usf_id, student->name,
                                student->email,
@@ -251,13 +276,19 @@ int main() {
         //find
         if (strcasecmp(command, "select") == 0) {
             // Read the search criteria entered by the user
-            char *needle;
+            char needle[128];																																	//CHANGED FROM '*needle' TO 'needle[128]'
             read_line(stdin, needle, 128);
             struct Student *student = NULL;
             struct stat st = {0};
             // Create the student_data directory if it does not already exist
-            if (stat("student_data", &st) == -1)
-                mkdir("student_data", 0700);
+			if (stat("student_data", &st) == -1) {																												//ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
+				#if defined(_WIN32)
+					_mkdir("student_data");
+				#else 
+					mkdir("student_data", 0700);
+				#endif
+			}
+
             DIR *dir;
             struct dirent *ent;
             // Open the student_data directory for reading
@@ -380,7 +411,7 @@ int main() {
             printf("Enter term project grade: ");
             read_line(stdin, grade_buffer, 1);
             student->term_project_grade = atoi(grade_buffer);
-            saveStudent(&student);
+            saveStudent(student);																							//CHANGED FROM 'saveStudent(&student)' TO 'saveStudent(student)'
             free(student);
             printf("New student has been created successfully.\n");
         } else 
