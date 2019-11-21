@@ -9,20 +9,6 @@
 #include <ctype.h>
 
 /**
-* Implementation of strcasecmp for use on Windows machines
-*/
-//int strcasecmp(const char *a, const char *b) {
-//	int ca, cb;
-//	do {
-//		ca = (unsigned char)*a++;
-//		cb = (unsigned char)*b++;
-//		ca = tolower(toupper(ca));
-//		cb = tolower(toupper(cb));
-//	} while (ca == cb && ca != '\0');
-//	return ca - cb;
-//}
-
-/**
  * Pointer to the currently selected student
  */
 struct Student *selected_student = NULL;
@@ -254,14 +240,14 @@ int main() {
             printf("----\n");
             // Open the student_data directory for reading
             if ((dir = opendir("student_data")) != NULL) {                                                  //CHANGED FROM "student-data" TO "student_data"
-                printf("ID\t\tName\t\tEmail\t\t\tPresentation Grade\t\tEssay Grade\t\tProject Grade\n");    //CHANGED TABS TO 2 TABS PER PARAMETER
+                printf("ID\t\tName\t\tEmail\t\t\tPresentation Grade\tEssay Grade\tProject Grade\n");    //CHANGED TABS TO 2 TABS PER PARAMETER
                 // Loop through all of the contents within the student_data directory
                 while ((ent = readdir(dir)) != NULL) {
                     if (ent->d_type == DT_REG) { // Files only
                         // Load the student from the found file
                         student = loadStudent(ent);																												//CHANGED FROM 'loadstudent' TO 'loadStudent'
                         // Print out the information about the student
-                        printf("%s\t%s\t%s\t\t\t%d\t\t\t\t\t%d\t\t\t%d\n", student->usf_id, student->name,
+                        printf("%s\t%s\t%s\t\t%d\t\t\t%d\t\t%d\n", student->usf_id, student->name,
                                student->email,
                                student->presentation_grade, student->essay_grade, student->term_project_grade);
                         // Because loadStudent() uses malloc(), we need to free it
@@ -301,6 +287,7 @@ int main() {
                         // Determine if either the ID, Name, or Email match what the user searched for
                         if (strcasecmp(student->usf_id, needle) == 0 || strcasecmp(student->name, needle) == 0 ||
                             strcasecmp(student->email, needle) == 0) {
+                            break;                                                                                      //ADDED "break;"
                         } else {
                             free(student);
                             student = NULL;
