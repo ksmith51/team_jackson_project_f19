@@ -72,7 +72,7 @@ struct Student *loadStudent(struct dirent *file) {
     // Build the file path to save the student under
     FILE *fp;
     char *path = concat("student_data/", file->d_name);
-	  fp = fopen(path, "r");																																		//CHANGED FROM 'fclose(path)' TO 'fopen(path, "r")'
+	  fp = fopen(path, "r");      //CHANGED FROM 'fclose(path)' TO 'fopen(path, "r")'
     free(path);
 
     if (fp == NULL) {
@@ -115,16 +115,16 @@ bool saveStudent(struct Student *student) {
     struct stat st = {0};
 
     // Create the student_data directory if it does not already exist
-	if (stat("student_data", &st) == -1) {																														//ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
-		#if defined(_WIN32)
-			mkdir("student_data");
-		#else 
-			mkdir("student_data", 0700);
-		#endif
-	}
+	  if (stat("student_data", &st) == -1) {      //ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
+		    #if defined(_WIN32)
+			      mkdir("student_data");
+		    #else
+			      mkdir("student_data", 0700);
+  		  #endif
+	  }
 
     // Build the file path to save the student under
-    char *partial_path = concat("student_data/", student->usf_id);																								//CHANGED FROM 'partial_path' TO '*partial_path'
+    char *partial_path = concat("student_data/", student->usf_id);      //CHANGED FROM 'partial_path' TO '*partial_path'
     char *path = concat(partial_path, ".txt");
 
     free(partial_path);
@@ -206,7 +206,7 @@ int main() {
 
     while (true) {
 
-        int operation;																																			//ADDED DECLARATION OF 'int operation'
+        int operation;      //ADDED DECLARATION OF 'int operation'
 
         scanf("%s", command);
 
@@ -226,12 +226,12 @@ int main() {
         if (strcasecmp(command, "list") == 0) {
             struct stat st = {0};
             // Create the student_data directory if it does not already exist
-			      if (stat("student_data", &st) == -1) {																												//ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
-				    #if defined(_WIN32)
-					    mkdir("student_data");
-  				  #else 
-					    mkdir("student_data", 0700);
-				    #endif
+			      if (stat("student_data", &st) == -1) {      //ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
+				        #if defined(_WIN32)
+					        mkdir("student_data");
+  				      #else 
+					        mkdir("student_data", 0700);
+				        #endif
 			      }
 
             DIR *dir;
@@ -239,13 +239,13 @@ int main() {
             struct Student *student;
             printf("----\n");
             // Open the student_data directory for reading
-            if ((dir = opendir("student_data")) != NULL) {                                                  //CHANGED FROM "student-data" TO "student_data"
-                printf("ID\t\tName\t\tEmail\t\t\tPresentation Grade\tEssay Grade\tProject Grade\n");    //CHANGED TABS TO 2 TABS PER PARAMETER
+            if ((dir = opendir("student_data")) != NULL) {      //CHANGED FROM "student-data" TO "student_data"
+                printf("ID\t\tName\t\tEmail\t\t\tPresentation Grade\tEssay Grade\tProject Grade\n");      //CHANGED TABS
                 // Loop through all of the contents within the student_data directory
                 while ((ent = readdir(dir)) != NULL) {
                     if (ent->d_type == DT_REG) { // Files only
                         // Load the student from the found file
-                        student = loadStudent(ent);																												//CHANGED FROM 'loadstudent' TO 'loadStudent'
+                        student = loadStudent(ent);      //CHANGED FROM 'loadstudent' TO 'loadStudent'
                         // Print out the information about the student
                         printf("%s\t%s\t%s\t\t%d\t\t\t%d\t\t%d\n", student->usf_id, student->name,
                                student->email,
@@ -262,12 +262,12 @@ int main() {
         //find
         if (strcasecmp(command, "select") == 0) {
             // Read the search criteria entered by the user
-            char needle[128];																																	                //CHANGED FROM '*needle' TO 'needle[128]'
+            char needle[128 + 1];      //CHANGED FROM '*needle' TO 'needle[128]'
             read_line(stdin, needle, 128);
             struct Student *student = NULL;
             struct stat st = {0};
             // Create the student_data directory if it does not already exist
-      			if (stat("student_data", &st) == -1) {																												//ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
+      			if (stat("student_data", &st) == -1) {      //ADDED ALL CODE OTHER THAN 'if' AND 'mkdir'
       				#if defined(_WIN32)
       					mkdir("student_data");
       				#else 
@@ -283,11 +283,11 @@ int main() {
                 while ((ent = readdir(dir)) != NULL) {
                     if (ent->d_type == DT_REG) { // Files only
                         // Load the student from the found file
-                        student = loadStudent(ent);	                                                                    //ADDED "student = loadStudent(ent)"
+                        student = loadStudent(ent);      //ADDED "student = loadStudent(ent)"
                         // Determine if either the ID, Name, or Email match what the user searched for
                         if (strcasecmp(student->usf_id, needle) == 0 || strcasecmp(student->name, needle) == 0 ||
                             strcasecmp(student->email, needle) == 0) {
-                            break;                                                                                      //ADDED "break;"
+                            break;      //ADDED "break;"
                         } else {
                             free(student);
                             student = NULL;
@@ -371,7 +371,7 @@ int main() {
                         break;
                 }
                 //save student file
-                saveStudent(selected_student);                                                         //ADDED "saveStudent(selected_student);"
+                saveStudent(selected_student);      //ADDED "saveStudent(selected_student);"
                 printf("Edit operation complete\n");
             } else {
                 printf("Unknown operation entered: %d\n", operation);
@@ -379,7 +379,7 @@ int main() {
         } else 
 
         //add
-        if (strcasecmp(command, "create") == 0 || strcasecmp(command, "add") == 0) {              //CHANGED "creat" TO "create"
+        if (strcasecmp(command, "create") == 0 || strcasecmp(command, "add") == 0) {      //CHANGED "creat" TO "create"
             struct Student *student = malloc(sizeof(struct Student));
             printf("Enter name: ");
             read_line(stdin, student->name, 40);
@@ -402,7 +402,7 @@ int main() {
             printf("Enter term project grade: ");
             read_line(stdin, grade_buffer, 1);
             student->term_project_grade = atoi(grade_buffer);
-            saveStudent(student);																							//CHANGED FROM 'saveStudent(&student)' TO 'saveStudent(student)'
+            saveStudent(student);      //CHANGED FROM 'saveStudent(&student)' TO 'saveStudent(student)'
             free(student);
             printf("New student has been created successfully.\n");
         } else 
